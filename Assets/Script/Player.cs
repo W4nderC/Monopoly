@@ -7,59 +7,91 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float moveSpd;
 
-    private Map worldMap;
-    private Transform moveToPos;
-    private int numOfStep; // num of tiles player can move
-    private int currentTileIndex = 0;
-    
+    public Route currentRoute;
+    private int routePos;
+    public int steps;
+    bool isMoving;
+    private Vector3 nextPos;
 
-    private void Awake() {
-        worldMap = GameObject.Find("Map").GetComponent<Map>();
+    private void Awake() 
+    {
+        currentRoute = GameObject.Find("Route").GetComponent<Route>();
     }
     
     private void Start() 
     {
-       DiceManager.Instance.OnDiceResult +=  DiceManager_OnDiceResult;
-       gameObject.transform.position = worldMap.tilePos[currentTileIndex].position;
+        GameManager.Instance.OnUnitMoving += GameManager_OnUnitMoving;
+        transform.position = currentRoute.tilePos[0].position;
     }
 
-    private void DiceManager_OnDiceResult(object sender, EventArgs e)
+    private void GameManager_OnUnitMoving(object sender, EventArgs e)
     {
-        numOfStep = DiceManager.Instance.GetDiceValue();
-        int numOfTilesInMap = worldMap.tilePos.Length;
+        steps = DiceManager.Instance.GetDiceValue();
 
-        for (int i = 0; i < numOfStep; i++)
+    }
+
+    private void Update()
+    {
+        if (GameManager.Instance.CheckGameState(GameManager.GameState.UnitMoving))
         {
-            currentTileIndex++;
-            if (currentTileIndex >= numOfTilesInMap)
-            {
-                currentTileIndex = 0;
-                gameObject.transform.position = Vector3.MoveTowards
-                (
-                    gameObject.transform.position, 
-                    worldMap.tilePos[currentTileIndex].position,
-                    200f
-                );
-                SetCurrentTileIndex(currentTileIndex);
-                // print("current tile index "+currentTileIndex);
-            }
-            else
-            {
-                gameObject.transform.position = Vector3.MoveTowards
-                (
-                    gameObject.transform.position, 
-                    worldMap.tilePos[currentTileIndex].position,
-                    200
-                );
-                SetCurrentTileIndex(currentTileIndex);
-                // print("current tile index "+currentTileIndex);
-            }
+            
+            Debug.Log("Dice rolled "+ steps);
 
+            // if (routePos + steps < currentRoute.childTileList.Count)
+            if (steps > 0)
+            {
+
+                StartCoroutine(Move());
+            }
+            // else{
+            //     Debug.Log("Rolled number is too high ");
+            // }
         }
     }
 
-    private int SetCurrentTileIndex(int tileIndex)
+    private IEnumerator Move()
     {
-        return this.currentTileIndex = tileIndex;
+        if (isMoving)
+        {
+            yield break;
+            
+        }
+        isMoving = true;
+
+        while (steps > 0)
+        {
+            routePos++;
+            // 
+            if (routePos >= currentRoute.childTileList.Count)
+            {
+                routePos = 0;
+                nextPos = currentRoute.childTileList[routePos].position;
+            } 
+            else
+            {
+                nextPos = currentRoute.childTileList[routePos ].position;
+            }
+
+            while (MoveToNextTile(nextPos))
+            {
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(.1f);
+            steps--;
+            // routePos++;
+        }
+
+        isMoving = false;
+    }
+
+    private bool MoveToNextTile(Vector3 goal)
+    {
+        return goal != (transform.position = Vector3.MoveTowards(transform.position, goal, 10f * Time.deltaTime));
+    }
+
+
+    private void OnDestroy() {
+        GameManager.Instance.OnUnitMoving -= GameManager_OnUnitMoving;
     }
 }

@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set;}
 
-
+    public event EventHandler OnUnitMoving;
 
     public enum GameState
     {
@@ -70,5 +70,9 @@ public class GameManager : MonoBehaviour
         return this.gameState == gameState;
     }
 
-
+    public void InvokeOnUnitMoving()
+    {
+        SetGameState(GameState.UnitMoving);
+        OnUnitMoving?.Invoke(this, EventArgs.Empty);
+    }
 }

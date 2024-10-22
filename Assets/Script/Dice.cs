@@ -87,7 +87,9 @@ public class Dice : MonoBehaviour
 
         // print("Dice value "+ diceResult);
         DiceManager.Instance.SetDiceValue(diceResult);
-        DiceManager.Instance.InvokeOnDiceResult();
+        GameManager.Instance.InvokeOnUnitMoving();
+        
+        // reset dice position
         // print("Origin trans "+originTrans);
         transform.position = originTrans;
         diceRb.useGravity = false;

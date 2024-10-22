@@ -12,11 +12,11 @@ public class DiceValueUI : UIMonoBehavior
     // Start is called before the first frame update
     void Start()
     {
-        DiceManager.Instance.OnDiceResult += DiceManager_OnDiceResult;
+        GameManager.Instance.OnUnitMoving += GameManager_OnUnitMoving;
         Hide();
     }
 
-    private void DiceManager_OnDiceResult(object sender, EventArgs e)
+    private void GameManager_OnUnitMoving(object sender, EventArgs e)
     {
         Show();
         diceTxt.text = DiceManager.Instance.GetDiceValue().ToString();
@@ -24,7 +24,7 @@ public class DiceValueUI : UIMonoBehavior
 
     private void OnDestroy() 
     {
-        DiceManager.Instance.OnDiceResult -=  DiceManager_OnDiceResult;
+        GameManager.Instance.OnUnitMoving -= GameManager_OnUnitMoving;
     }
 
 }

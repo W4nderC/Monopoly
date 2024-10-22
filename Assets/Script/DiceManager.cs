@@ -8,7 +8,7 @@ public class DiceManager : MonoBehaviour
     public static DiceManager Instance { get; private set;}
 
     public event EventHandler OnRollDice;
-    public event EventHandler OnDiceResult;
+    // public event EventHandler OnDiceResult;
 
     private int diceValue; // default
 
@@ -39,10 +39,10 @@ public class DiceManager : MonoBehaviour
         OnRollDice?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnDiceResult()
-    {
-        OnDiceResult?.Invoke(this, EventArgs.Empty);
-    }
+    // public void InvokeOnDiceResult()
+    // {
+    //     OnDiceResult?.Invoke(this, EventArgs.Empty);
+    // }
 
     public int GetDiceValue()
     {
