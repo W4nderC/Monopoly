@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DiceValueUI : UIMonoBehavior
+public class DiceValueUI : UIBehaviour
 {
     [SerializeField] private TextMeshProUGUI diceTxt;
 

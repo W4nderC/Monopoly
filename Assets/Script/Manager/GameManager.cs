@@ -7,7 +7,12 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set;}
 
+    public event EventHandler OnRollDice;
     public event EventHandler OnUnitMoving;
+    public event EventHandler OnTransaction;
+    public event EventHandler OnEvent;
+    public event EventHandler OnEndTurn;
+    public event EventHandler OnStandbyPhase;
 
     public enum GameState
     {
@@ -17,7 +22,8 @@ public class GameManager : MonoBehaviour
         Transaction,
         EndTurn,
         ChangeTurn,
-        GameOver
+        GameOver,
+        StanbyPhase
     }
 
     public GameState gameState ;
@@ -74,5 +80,35 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.UnitMoving);
         OnUnitMoving?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeOnTransaction()
+    {
+        SetGameState(GameState.Transaction);
+        OnTransaction?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeOnEvent()
+    {
+        SetGameState(GameState.Event);
+        OnEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeOnStandbyPhase()
+    {
+        SetGameState(GameState.StanbyPhase);
+        OnStandbyPhase?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeOnRollDice()
+    {
+        SetGameState(GameState.RollDice);
+        OnRollDice?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeOnEndTurn()
+    {
+        SetGameState(GameState.EndTurn);
+        OnEndTurn?.Invoke(this, EventArgs.Empty);
     }
 }

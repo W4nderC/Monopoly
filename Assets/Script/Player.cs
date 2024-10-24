@@ -34,19 +34,37 @@ public class Player : MonoBehaviour
     {
         if (GameManager.Instance.CheckGameState(GameManager.GameState.UnitMoving))
         {
-            
-            Debug.Log("Dice rolled "+ steps);
-
-            // if (routePos + steps < currentRoute.childTileList.Count)
+            // Debug.Log("Dice rolled "+ steps);
             if (steps > 0)
             {
-
                 StartCoroutine(Move());
             }
-            // else{
-            //     Debug.Log("Rolled number is too high ");
-            // }
+            else
+            {
+                GameManager.Instance.InvokeOnStandbyPhase();
+                if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit raycastHit, 20f))
+                {
+
+                    print(raycastHit.transform.name+ (" was hit"));
+                    if (raycastHit.transform.gameObject.TryGetComponent(out ITiles tile))
+                    {
+                        print("it's worked");
+                        tile.ChangeState();
+                    }
+                }
+            }
+
         }
+
+
+        
+
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(transform.position, Vector3.down);
     }
 
     private IEnumerator Move()

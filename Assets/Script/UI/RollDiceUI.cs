@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RollDiceUI : MonoBehaviour
+public class RollDiceUI : UIBehaviour
 {
     [SerializeField] private Button rollDiceBtn;
 
@@ -13,11 +14,21 @@ public class RollDiceUI : MonoBehaviour
         rollDiceBtn.onClick.AddListener(() => {
             DiceManager.Instance.InvokeOnRollDice();
         });
+
+        GameManager.Instance.OnRollDice += GameManager_OnRollDice;
     }
 
-    // Update is called once per frame
+    private void GameManager_OnRollDice(object sender, EventArgs e)
+    {
+        Show();
+    }
+
+
     void Update()
     {
-        
+        if (!GameManager.Instance.CheckGameState(GameManager.GameState.RollDice))
+        {
+            Hide();
+        }
     }
 }
