@@ -12,7 +12,13 @@ public class GameManager : MonoBehaviour
     public event EventHandler OnTransaction;
     public event EventHandler OnEvent;
     public event EventHandler OnEndTurn;
+    public event EventHandler OnChangeTurn;
     public event EventHandler OnStandbyPhase;
+
+    private float endTurnTimer ; //default
+    private float changeTurnTimer ; //default
+    [SerializeField] private float endTurnDuration = 1f; //default
+    [SerializeField] private float changeTurnDuration = 1f; //default
 
     public enum GameState
     {
@@ -40,6 +46,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start() 
+    {
+        endTurnTimer = endTurnDuration;
+        changeTurnTimer = changeTurnDuration;
+    }
+
     void Update()
     {
         GameStateHandler();
@@ -58,8 +70,20 @@ public class GameManager : MonoBehaviour
             case GameState.Transaction:
                 break;
             case GameState.EndTurn:
+                endTurnTimer -= Time.deltaTime;
+                if (endTurnTimer <= 0)
+                {
+                    InvokeOnChangeTurn();
+                    endTurnTimer = endTurnDuration;
+                }
                 break;
             case GameState.ChangeTurn:
+                changeTurnTimer -= Time.deltaTime;
+                if (changeTurnTimer <= 0)
+                {
+                    InvokeOnRollDice();
+                    changeTurnTimer = changeTurnDuration;
+                }
                 break;
             case GameState.GameOver:
                 break;
@@ -111,4 +135,12 @@ public class GameManager : MonoBehaviour
         SetGameState(GameState.EndTurn);
         OnEndTurn?.Invoke(this, EventArgs.Empty);
     }
+
+    public void InvokeOnChangeTurn()
+    {
+        SetGameState(GameState.ChangeTurn);
+        OnChangeTurn?.Invoke(this, EventArgs.Empty);
+    }
+
+
 }
