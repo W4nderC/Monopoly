@@ -74,8 +74,8 @@ public class DiceManager : MonoBehaviour
     {
         diceValue1 = 0; 
         diceValue2 = 0;
-        print("Get dice value 1 "+diceValue1);
-        print("Get dice value 2 "+diceValue2);
+        // print("Get dice value 1 "+diceValue1);
+        // print("Get dice value 2 "+diceValue2);
         
     }
 

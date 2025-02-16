@@ -30,7 +30,7 @@ public class GameManager : NetworkBehaviour
         EndTurn,
         ChangeTurn,
         GameOver,
-        StanbyPhase
+        StanbyPhase,
     }
 
     public enum PlayerType {
@@ -38,7 +38,7 @@ public class GameManager : NetworkBehaviour
         Player1,
         Player2,
         Player3,
-        Player4
+        LastPlayer
     }
 
     public GameState gameState ;
@@ -61,6 +61,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private float endTurnDuration = 1f; //default
     [SerializeField] private float changeTurnDuration = 1f; //default
     private PlayerType localPlayerType;
+    private NetworkVariable<PlayerType> currentPlayablePlayerType = new NetworkVariable<PlayerType>();
 
 
     private void Start() 
@@ -98,7 +99,7 @@ public class GameManager : NetworkBehaviour
                 changeTurnTimer -= Time.deltaTime;
                 if (changeTurnTimer <= 0)
                 {
-                    InvokeOnRollDice();
+                    TriggerOnRollDiceRpc();
                     changeTurnTimer = changeTurnDuration;
                 }
                 break;
@@ -112,14 +113,14 @@ public class GameManager : NetworkBehaviour
         if (NetworkManager.Singleton.LocalClientId == 0) //server
         {
             localPlayerType = PlayerType.Player1;
-            print("server call trigger!");
+            // print("server call trigger!");
         } 
         else if(NetworkManager.Singleton.LocalClientId == 1)
         {
             localPlayerType = PlayerType.Player2; // Client
-            print("client call trigger! "+localPlayerType);
-            
+            // print("client call trigger! "+localPlayerType);
         }
+
         TriggerPlayerConnectedRpc(localPlayerType);
         if(IsServer) {
             
@@ -140,11 +141,10 @@ public class GameManager : NetworkBehaviour
 
     private void NetworkManager_OnClientConnectedCallback(ulong obj)
     {
-        
         if(NetworkManager.Singleton.ConnectedClientsList.Count == 2) {
             // if there are 2 client connected, start the game
-            // currentPlayablePlayerType.Value = PlayerType.Cross;
-            
+            currentPlayablePlayerType.Value = PlayerType.Player1;
+            print("current player type: "+currentPlayablePlayerType.Value);
             TriggerGameStartedRpc();
         }
     }
@@ -153,6 +153,42 @@ public class GameManager : NetworkBehaviour
     public void TriggerGameStartedRpc()
     {
         OnGameStarted?.Invoke(this, EventArgs.Empty);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void ActivePlayerRpc(PlayerType playerType)
+    {
+        if(playerType != currentPlayablePlayerType.Value) {
+            // check is player turn, if not then do nothing
+            // TriggerOnStandbyPhaseRpc();
+            return;
+        }
+        
+        TriggerOnRollDiceRpc();
+    }
+
+    [Rpc(SendTo.Server)]
+    public void SwitchPlayerRpc(PlayerType playerType)
+    {
+        // change player turn
+        switch (playerType) 
+        {
+            default:
+            case PlayerType.Player1:
+                currentPlayablePlayerType.Value = PlayerType.Player2;
+                break;
+            case PlayerType.Player2:
+                currentPlayablePlayerType.Value = PlayerType.Player1;
+                break;
+            // case PlayerType.Player3:
+            //     currentPlayablePlayerType.Value = PlayerType.LastPlayer;
+            //     break;
+            // case PlayerType.LastPlayer:
+            //     currentPlayablePlayerType.Value = PlayerType.Player1;
+            //     break;
+        }
+
+        // TestWinner();
     }
 
     public void SetGameState(GameState gameState)
@@ -183,13 +219,15 @@ public class GameManager : NetworkBehaviour
         OnEvent?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnStandbyPhase()
+    [Rpc(SendTo.ClientsAndHost)]
+    public void TriggerOnStandbyPhaseRpc()
     {
         SetGameState(GameState.StanbyPhase);
         OnStandbyPhase?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnRollDice()
+    [Rpc(SendTo.ClientsAndHost)]
+    public void TriggerOnRollDiceRpc()
     {
         SetGameState(GameState.RollDice);
         OnRollDice?.Invoke(this, EventArgs.Empty);
@@ -207,5 +245,13 @@ public class GameManager : NetworkBehaviour
         OnChangeTurn?.Invoke(this, EventArgs.Empty);
     }
 
+    public PlayerType GetLocalPlayerType()
+    {
+        return localPlayerType;
+    }
 
+    public PlayerType GetCurrentPlayablePlayerType()
+    {
+        return currentPlayablePlayerType.Value;
+    }
 }

@@ -8,25 +8,32 @@ public class RollDiceUI : UIBehaviour
 {
     [SerializeField] private Button rollDiceBtn;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    private void Awake() {
         rollDiceBtn.onClick.AddListener(() => {
             DiceManager.Instance.InvokeOnRollDice();
         });
 
+    }
+
+    void Start()
+    {
         GameManager.Instance.OnRollDice += GameManager_OnRollDice;
     }
 
     private void GameManager_OnRollDice(object sender, EventArgs e)
     {
-        Show();
+        if(GameManager.Instance.GetLocalPlayerType() == GameManager.Instance.GetCurrentPlayablePlayerType()) {
+            Show();
+        }
+        
     }
 
 
     void Update()
     {
-        if (!GameManager.Instance.CheckGameState(GameManager.GameState.RollDice))
+        if 
+        (!GameManager.Instance.CheckGameState(GameManager.GameState.RollDice)
+        ||GameManager.Instance.GetLocalPlayerType() != GameManager.Instance.GetCurrentPlayablePlayerType())
         {
             Hide();
         }

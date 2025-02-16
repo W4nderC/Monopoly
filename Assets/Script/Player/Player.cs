@@ -22,7 +22,20 @@ public class Player : MonoBehaviour
     private void Start() 
     {
         GameManager.Instance.OnUnitMoving += GameManager_OnUnitMoving;
+        GameManager.Instance.OnGameStarted += GameManager_OnGameStarted;
+        GameManager.Instance.OnEndTurn += GameManager_OnEndTurn;
         transform.position = currentRoute.tilePos[0].position;
+    }
+
+    private void GameManager_OnEndTurn(object sender, EventArgs e)
+    {
+        GameManager.Instance.SwitchPlayerRpc(GameManager.Instance.GetLocalPlayerType());
+    }
+
+    private void GameManager_OnGameStarted(object sender, EventArgs e)
+    {
+        print("LocalPlayerType: "+GameManager.Instance.GetLocalPlayerType());
+        GameManager.Instance.ActivePlayerRpc(GameManager.Instance.GetLocalPlayerType());
     }
 
     private void GameManager_OnUnitMoving(object sender, EventArgs e)
@@ -42,7 +55,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                GameManager.Instance.InvokeOnStandbyPhase();
+                GameManager.Instance.TriggerOnStandbyPhaseRpc();
                 if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit raycastHit, 20f))
                 {
 
@@ -54,12 +67,7 @@ public class Player : MonoBehaviour
                     }
                 }
             }
-
         }
-
-
-        
-
     }
 
     void OnDrawGizmos()

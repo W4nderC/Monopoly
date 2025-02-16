@@ -9,7 +9,6 @@ public class DiceValueUI : UIBehaviour
 {
     [SerializeField] private TextMeshProUGUI diceTxt;
 
-    // Start is called before the first frame update
     void Start()
     {
         GameManager.Instance.OnUnitMoving += GameManager_OnUnitMoving;
