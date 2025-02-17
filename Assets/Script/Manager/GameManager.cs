@@ -91,7 +91,7 @@ public class GameManager : NetworkBehaviour
                 endTurnTimer -= Time.deltaTime;
                 if (endTurnTimer <= 0)
                 {
-                    InvokeOnChangeTurn();
+                    TriggerOnChangeTurnRpc();
                     endTurnTimer = endTurnDuration;
                 }
                 break;
@@ -239,7 +239,8 @@ public class GameManager : NetworkBehaviour
         OnEndTurn?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnChangeTurn()
+    [Rpc(SendTo.ClientsAndHost)]
+    public void TriggerOnChangeTurnRpc()
     {
         SetGameState(GameState.ChangeTurn);
         OnChangeTurn?.Invoke(this, EventArgs.Empty);

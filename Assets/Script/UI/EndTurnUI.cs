@@ -7,24 +7,28 @@ public class EndTurnUI : UIBehaviour
 {
 
 
-    // Start is called before the first frame update
     void Start()
     {
         GameManager.Instance.OnEndTurn += GameManager_OnEndTurn;
+        GameManager.Instance.OnChangeTurn += GameManager_OnChangeTurn;
+        Hide();
+    }
+
+    private void GameManager_OnChangeTurn(object sender, EventArgs e)
+    {
         Hide();
     }
 
     private void GameManager_OnEndTurn(object sender, EventArgs e)
     {
-        Show();
+        ToggleUI();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(!GameManager.Instance.CheckGameState(GameManager.GameState.EndTurn))
-        {
-            Hide();
-        }
-    }
+    // void Update()
+    // {
+    //     if(!GameManager.Instance.CheckGameState(GameManager.GameState.EndTurn))
+    //     {
+    //         Hide();
+    //     }
+    // }
 }

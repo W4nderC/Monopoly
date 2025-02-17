@@ -14,4 +14,17 @@ public class UIBehaviour : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    public void ToggleUI()
+    {
+        if(GameManager.Instance.GetLocalPlayerType() == GameManager.Instance.GetCurrentPlayablePlayerType()) {
+            Show();
+        }
+        else if 
+        (!GameManager.Instance.CheckGameState(GameManager.GameState.RollDice)
+        ||GameManager.Instance.GetLocalPlayerType() != GameManager.Instance.GetCurrentPlayablePlayerType())
+        {
+            Hide();
+        }
+    }
+
 }

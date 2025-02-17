@@ -12,12 +12,13 @@ public class LandUI : UIBehaviour
     {
         returnBtn.onClick.AddListener(() => {
             GameManager.Instance.InvokeOnEndTurn();
+            Hide();
         });
     }
 
     private void GameManager_OnTransaction(object sender, EventArgs e)
     {
-        Show();
+        ToggleUI();
     }
 
     void Start()
@@ -26,14 +27,13 @@ public class LandUI : UIBehaviour
         Hide();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (!GameManager.Instance.CheckGameState(GameManager.GameState.Transaction))
-        {
-            Hide();
-        }
-    }
+    // void Update()
+    // {
+    //     if (!GameManager.Instance.CheckGameState(GameManager.GameState.Transaction))
+    //     {
+    //         Hide();
+    //     }
+    // }
 
     private void OnDestroy() 
     {

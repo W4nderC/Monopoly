@@ -12,12 +12,13 @@ public class EventUI : UIBehaviour
     {
         returnBtn.onClick.AddListener(() => {
             GameManager.Instance.InvokeOnEndTurn();
+            Hide();
         });
     }
 
     private void GameManager_OnEvent(object sender, EventArgs e)
     {
-        Show();
+        ToggleUI();
     }
 
     void Start()
@@ -26,14 +27,13 @@ public class EventUI : UIBehaviour
         Hide();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (!GameManager.Instance.CheckGameState(GameManager.GameState.Event))
-        {
-            Hide();
-        }
-    }
+    // void Update()
+    // {
+    //     if (!GameManager.Instance.CheckGameState(GameManager.GameState.Event))
+    //     {
+    //         Hide();
+    //     }
+    // }
 
     private void OnDestroy() 
     {

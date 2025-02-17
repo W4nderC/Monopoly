@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
                     print(raycastHit.transform.name+ (" was hit"));
                     if (raycastHit.transform.gameObject.TryGetComponent(out ITiles tile))
                     {
-                        print("it's worked");
+                        // Change state when player token stop moving
                         tile.ChangeState();
                     }
                 }
