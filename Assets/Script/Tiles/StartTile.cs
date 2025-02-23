@@ -6,7 +6,7 @@ public class StartTile : MonoBehaviour, ITiles
 {
     public void ChangeState()
     {
-        GameManager.Instance.InvokeOnEndTurn();
+        GameManager.Instance.TriggerOnEndTurnRpc();
     }
 
     // Start is called before the first frame update

@@ -11,7 +11,7 @@ public class EventUI : UIBehaviour
     private void Awake() 
     {
         returnBtn.onClick.AddListener(() => {
-            GameManager.Instance.InvokeOnEndTurn();
+            GameManager.Instance.TriggerOnEndTurnRpc();
             Hide();
         });
     }

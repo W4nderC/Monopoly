@@ -56,27 +56,25 @@ public class GameManager : NetworkBehaviour
     }
 
 
-    private float endTurnTimer ; //default
-    private float changeTurnTimer ; //default
+    private NetworkVariable<float> endTurnTimer = new NetworkVariable<float>(); //default
+    private NetworkVariable<float> changeTurnTimer = new NetworkVariable<float>(); //default
     [SerializeField] private float endTurnDuration = 1f; //default
     [SerializeField] private float changeTurnDuration = 1f; //default
     private PlayerType localPlayerType;
-    private NetworkVariable<PlayerType> currentPlayablePlayerType = new NetworkVariable<PlayerType>();
+    [SerializeField] private NetworkVariable<PlayerType> currentPlayablePlayerType = new NetworkVariable<PlayerType>();
 
-
-    private void Start() 
-    {
-        endTurnTimer = endTurnDuration;
-        changeTurnTimer = changeTurnDuration;
-    }
+// Code for single player
+    // private void Start() 
+    // {
+    //     endTurnTimer.Value = endTurnDuration;
+    //     changeTurnTimer.Value = changeTurnDuration;
+    // }
 
     void Update()
     {
-        GameStateHandler();
-    }
+        if(!IsServer) return;
+        
 
-    private void GameStateHandler()
-    {
         switch(gameState)
         {
             case GameState.RollDice:
@@ -88,19 +86,19 @@ public class GameManager : NetworkBehaviour
             case GameState.Transaction:
                 break;
             case GameState.EndTurn:
-                endTurnTimer -= Time.deltaTime;
-                if (endTurnTimer <= 0)
+                endTurnTimer.Value -= Time.deltaTime;
+                if (endTurnTimer.Value <= 0)
                 {
                     TriggerOnChangeTurnRpc();
-                    endTurnTimer = endTurnDuration;
+                    endTurnTimer.Value = endTurnDuration;
                 }
                 break;
             case GameState.ChangeTurn:
-                changeTurnTimer -= Time.deltaTime;
-                if (changeTurnTimer <= 0)
+                changeTurnTimer.Value -= Time.deltaTime;
+                if (changeTurnTimer.Value <= 0)
                 {
                     TriggerOnRollDiceRpc();
-                    changeTurnTimer = changeTurnDuration;
+                    changeTurnTimer.Value = changeTurnDuration;
                 }
                 break;
             case GameState.GameOver:
@@ -108,8 +106,14 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    // private void GameStateHandler()
+    // {
+
+    // }
+
     public override void OnNetworkSpawn()
     {
+
         if (NetworkManager.Singleton.LocalClientId == 0) //server
         {
             localPlayerType = PlayerType.Player1;
@@ -123,7 +127,9 @@ public class GameManager : NetworkBehaviour
 
         TriggerPlayerConnectedRpc(localPlayerType);
         if(IsServer) {
-            
+            endTurnTimer.Value = endTurnDuration;
+            changeTurnTimer.Value = changeTurnDuration;
+
             // this code run everytime client connected
             NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;    
         }
@@ -133,7 +139,7 @@ public class GameManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void TriggerPlayerConnectedRpc(PlayerType playerType)
     {
-        print(playerType+" call event time");
+        // print(playerType+" call event time");
         OnPlayerConnected?.Invoke(this, new OnPlayerConnectedEventArgs {
             playerType = playerType
         });
@@ -144,7 +150,6 @@ public class GameManager : NetworkBehaviour
         if(NetworkManager.Singleton.ConnectedClientsList.Count == 2) {
             // if there are 2 client connected, start the game
             currentPlayablePlayerType.Value = PlayerType.Player1;
-            print("current player type: "+currentPlayablePlayerType.Value);
             TriggerGameStartedRpc();
         }
     }
@@ -187,7 +192,7 @@ public class GameManager : NetworkBehaviour
             //     currentPlayablePlayerType.Value = PlayerType.Player1;
             //     break;
         }
-
+// print("currentPlayablePlayerType turn: "+currentPlayablePlayerType.Value);
         // TestWinner();
     }
 
@@ -201,19 +206,22 @@ public class GameManager : NetworkBehaviour
         return this.gameState == gameState;
     }
 
-    public void InvokeOnUnitMoving()
+    [Rpc(SendTo.ClientsAndHost)]
+    public void InvokeOnUnitMovingRpc()
     {
         SetGameState(GameState.UnitMoving);
         OnUnitMoving?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnTransaction()
+    [Rpc(SendTo.ClientsAndHost)]
+    public void InvokeOnTransactionRpc()
     {
         SetGameState(GameState.Transaction);
         OnTransaction?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnEvent()
+    [Rpc(SendTo.ClientsAndHost)]
+    public void TriggerOnEventRpc()
     {
         SetGameState(GameState.Event);
         OnEvent?.Invoke(this, EventArgs.Empty);
@@ -233,7 +241,8 @@ public class GameManager : NetworkBehaviour
         OnRollDice?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnEndTurn()
+    [Rpc(SendTo.ClientsAndHost)]
+    public void TriggerOnEndTurnRpc()
     {
         SetGameState(GameState.EndTurn);
         OnEndTurn?.Invoke(this, EventArgs.Empty);
@@ -244,6 +253,9 @@ public class GameManager : NetworkBehaviour
     {
         SetGameState(GameState.ChangeTurn);
         OnChangeTurn?.Invoke(this, EventArgs.Empty);
+
+        SwitchPlayerRpc(currentPlayablePlayerType.Value);
+        // print("local player "+localPlayerType);
     }
 
     public PlayerType GetLocalPlayerType()

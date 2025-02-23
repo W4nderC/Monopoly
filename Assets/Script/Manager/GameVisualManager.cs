@@ -8,7 +8,6 @@ public class GameVisualManager : NetworkBehaviour
     
     [SerializeField] private Transform playablePlayerPrefab2;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GameManager.Instance.OnPlayerConnected += GameManager_OnPlayerConnected;
@@ -16,7 +15,7 @@ public class GameVisualManager : NetworkBehaviour
 
     private void GameManager_OnPlayerConnected(object sender, GameManager.OnPlayerConnectedEventArgs e)
     {
-        SpawnObjectRpc(e.playerType);
+        // SpawnObjectRpc(e.playerType);
     }
 
     [Rpc(SendTo.Server)]
@@ -33,8 +32,11 @@ public class GameVisualManager : NetworkBehaviour
                 prefab = playablePlayerPrefab2;
             break;
         }
-        Transform spawnedCrossTransform = Instantiate(prefab);
-        spawnedCrossTransform.GetComponent<NetworkObject>().Spawn(true);
+        Transform spawnedPlayerTransform = Instantiate(prefab);
+        // spawnedPlayerTransform.GetComponent<NetworkObject>().Spawn(true);
+        
+        spawnedPlayerTransform.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+        print("Owner client Id: ");
         
         // visualGameObjectList.Add(spawnedCrossTransform.gameObject);
     }

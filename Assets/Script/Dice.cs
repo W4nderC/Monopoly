@@ -85,12 +85,10 @@ public class Dice : MonoBehaviour
         }
         int diceResult = topFace + 1;
 
-        // print("Dice value "+ diceResult);
         DiceManager.Instance.SetDiceValue(diceResult);
         DiceManager.Instance.Check2Dice();
         
         // reset dice position
-        // print("Origin trans "+originTrans);
         transform.position = originTrans;
         diceRb.useGravity = false;
     }

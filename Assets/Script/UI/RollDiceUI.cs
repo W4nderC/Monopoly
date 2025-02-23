@@ -11,7 +11,7 @@ public class RollDiceUI : UIBehaviour
     private void Awake() {
         rollDiceBtn.onClick.AddListener(() => {
             DiceManager.Instance.InvokeOnRollDice();
-            Hide();
+            Hide();            
         });
 
     }
@@ -27,15 +27,4 @@ public class RollDiceUI : UIBehaviour
         ToggleUI();
         
     }
-
-
-    // void Update()
-    // {
-    //     if 
-    //     (!GameManager.Instance.CheckGameState(GameManager.GameState.RollDice)
-    //     ||GameManager.Instance.GetLocalPlayerType() != GameManager.Instance.GetCurrentPlayablePlayerType())
-    //     {
-    //         Hide();
-    //     }
-    // }
 }

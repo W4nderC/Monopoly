@@ -6,7 +6,7 @@ public class Land : MonoBehaviour, ITiles
 {
     public void ChangeState()
     {
-        GameManager.Instance.InvokeOnTransaction();
+        GameManager.Instance.InvokeOnTransactionRpc();
         print("Transaction time");
         
     }

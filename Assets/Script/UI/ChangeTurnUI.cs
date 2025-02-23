@@ -17,7 +17,6 @@ public class ChangeTurnUI : UIBehaviour
         Show();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(!GameManager.Instance.CheckGameState(GameManager.GameState.ChangeTurn)) 

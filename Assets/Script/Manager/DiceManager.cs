@@ -8,6 +8,11 @@ public class DiceManager : MonoBehaviour
     public static DiceManager Instance { get; private set;}
 
     public event EventHandler OnRollDice;
+    
+    public event EventHandler<OnReceiveDiceValueEventArgs> OnReceiveDiceValue;
+    public class OnReceiveDiceValueEventArgs: EventArgs{
+        public int sumDiceValue;
+    }
     // public event EventHandler OnDiceResult;
 
     private int diceValue1; // default
@@ -35,11 +40,6 @@ public class DiceManager : MonoBehaviour
         ResetDiceValue();
     }
 
-    void Update()
-    {
-        
-    }
-
     public void InvokeOnRollDice()
     {
         OnRollDice?.Invoke(this, EventArgs.Empty);
@@ -52,8 +52,8 @@ public class DiceManager : MonoBehaviour
 
     public int GetDiceValue()
     {
-        print("Get dice value 1 "+diceValue1);
-        print("Get dice value 2 "+diceValue2);
+        // print("Get dice value 1 "+diceValue1);
+        // print("Get dice value 2 "+diceValue2);
         return diceValue1 + diceValue2;
     }
 
@@ -81,10 +81,13 @@ public class DiceManager : MonoBehaviour
 
     public void Check2Dice()
     {
+        OnReceiveDiceValue?.Invoke(this, new OnReceiveDiceValueEventArgs {
+            sumDiceValue = GetDiceValue()
+        });
         // if both dice have value => change game state
         if (diceValue1 > 0 && diceValue2 > 0)
         {
-            GameManager.Instance.InvokeOnUnitMoving();
+            GameManager.Instance.InvokeOnUnitMovingRpc();
         }
     }
 }

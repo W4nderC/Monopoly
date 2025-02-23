@@ -21,7 +21,8 @@ public class EndTurnUI : UIBehaviour
 
     private void GameManager_OnEndTurn(object sender, EventArgs e)
     {
-        ToggleUI();
+        // ToggleUI();
+        Show();
     }
 
     // void Update()

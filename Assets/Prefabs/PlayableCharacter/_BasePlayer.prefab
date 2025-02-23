@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -1921663349737175511}
   - component: {fileID: 6077873338747315994}
   - component: {fileID: 5142926884029562820}
-  - component: {fileID: -3158916195077321133}
+  - component: {fileID: 2754203739191086277}
   m_Layer: 0
   m_Name: _BasePlayer
   m_TagString: Untagged
@@ -99,6 +99,7 @@ MonoBehaviour:
   moveSpd: 10
   currentRoute: {fileID: 0}
   steps: 0
+  localPlayerName: 
 --- !u!114 &5142926884029562820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentMoney: 1500
---- !u!114 &-3158916195077321133
+--- !u!114 &2754203739191086277
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,11 +122,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3659861532770143021}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d1dc09757964de4ba5c15dda40e4c33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  NetworkTransformExpanded: 0
+  NetworkTransformExpanded: 1
   AuthorityMode: 0
   TickSyncChildren: 0
   UseUnreliableDeltas: 0

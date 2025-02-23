@@ -6,7 +6,7 @@ public class Event : MonoBehaviour, ITiles
 {
     public void ChangeState()
     {
-        GameManager.Instance.InvokeOnEvent();
+        GameManager.Instance.TriggerOnEventRpc();
         print("Event time");
     }
 
