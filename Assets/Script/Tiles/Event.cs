@@ -4,21 +4,15 @@ using UnityEngine;
 
 public class Event : MonoBehaviour, ITiles
 {
+    [SerializeField] private EventObjectSO eventObjectSO;
+
     public void ChangeState()
     {
         GameManager.Instance.TriggerOnEventRpc();
         print("Event time");
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public EventObjectSO GetLandScriptableObject(){
+        return eventObjectSO;
     }
 }

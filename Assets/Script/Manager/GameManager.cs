@@ -10,7 +10,10 @@ public class GameManager : NetworkBehaviour
 
     public event EventHandler OnRollDice;
     public event EventHandler OnUnitMoving;
-    public event EventHandler OnTransaction;
+    public event EventHandler OnBuyLand;
+    public event EventHandler OnUpgradeLand;
+    
+    public event EventHandler OnBuyBackLand;
     public event EventHandler OnEvent;
     public event EventHandler OnEndTurn;
     public event EventHandler OnChangeTurn;
@@ -26,7 +29,9 @@ public class GameManager : NetworkBehaviour
         RollDice,
         UnitMoving,
         Event,
-        Transaction,
+        BuyLand,
+        UpgradeLand,
+        BuyBackLand,
         EndTurn,
         ChangeTurn,
         GameOver,
@@ -38,7 +43,7 @@ public class GameManager : NetworkBehaviour
         Player1,
         Player2,
         Player3,
-        LastPlayer
+        Player4
     }
 
     public GameState gameState ;
@@ -83,7 +88,7 @@ public class GameManager : NetworkBehaviour
                 break;
             case GameState.Event:
                 break;
-            case GameState.Transaction:
+            case GameState.BuyLand:
                 break;
             case GameState.EndTurn:
                 endTurnTimer.Value -= Time.deltaTime;
@@ -105,11 +110,6 @@ public class GameManager : NetworkBehaviour
                 break;
         }
     }
-
-    // private void GameStateHandler()
-    // {
-
-    // }
 
     public override void OnNetworkSpawn()
     {
@@ -207,17 +207,31 @@ public class GameManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void InvokeOnUnitMovingRpc()
+    public void TriggerOnUnitMovingRpc()
     {
         SetGameState(GameState.UnitMoving);
         OnUnitMoving?.Invoke(this, EventArgs.Empty);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void InvokeOnTransactionRpc()
+    public void TriggerOnBuyLandRpc()
     {
-        SetGameState(GameState.Transaction);
-        OnTransaction?.Invoke(this, EventArgs.Empty);
+        SetGameState(GameState.BuyLand);
+        OnBuyLand?.Invoke(this, EventArgs.Empty);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void TriggerOnUpgradeLandRpc()
+    {
+        SetGameState(GameState.UpgradeLand);
+        OnUpgradeLand?.Invoke(this, EventArgs.Empty);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void TriggerOnBuyBackLandRpc()
+    {
+        SetGameState(GameState.BuyBackLand);
+        OnBuyBackLand?.Invoke(this, EventArgs.Empty);
     }
 
     [Rpc(SendTo.ClientsAndHost)]

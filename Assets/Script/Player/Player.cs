@@ -34,7 +34,7 @@ public class Player : NetworkBehaviour
         DiceManager.Instance.OnReceiveDiceValue += DiceManager_OnReceiveDiceValue;
         GameManager.Instance.OnGameStarted += GameManager_OnGameStarted;
         GameManager.Instance.OnChangeTurn += GameManager_OnChangeTurn;
-        // GameManager.Instance.OnEndTurn += GameManager_OnEndTurn;
+
         transform.position = currentRoute.tilePos[0].position;
     }
 
@@ -51,7 +51,6 @@ public class Player : NetworkBehaviour
 
     private void GameManager_OnGameStarted(object sender, EventArgs e)
     {
-        // print("LocalPlayerType: "+GameManager.Instance.GetLocalPlayerType());
         GameManager.Instance.ActivePlayerRpc(GameManager.Instance.GetLocalPlayerType());
     }
 
@@ -62,10 +61,8 @@ public class Player : NetworkBehaviour
             return;
         }
 
-        // PlayerMovementRpc();  
         if (GameManager.Instance.CheckGameState(GameManager.GameState.UnitMoving))
         {
-            // Debug.Log("Dice rolled "+ steps);
             if (steps > 0)
             {
                 TriggerStartMoveRpc();
@@ -76,11 +73,21 @@ public class Player : NetworkBehaviour
                 GameManager.Instance.TriggerOnStandbyPhaseRpc();
                 if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit raycastHit, 20f))
                 {
-                    print(raycastHit.transform.name+ (" was hit"));
+                    // print(raycastHit.transform.name+ (" was hit"));
                     if (raycastHit.transform.gameObject.TryGetComponent(out ITiles tile))
                     {
                         // Change state when player token stop moving
                         tile.ChangeState();
+                    }
+                }
+
+                if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit landHit, 20f))
+                {
+                    if (landHit.transform.gameObject.TryGetComponent(out Land land))
+                    {
+                        if(land.IsThisLandNotOwnedByPlayer()) {
+                            CurrencyManager.Instance.TriggerOnPayRentRpc();
+                        }
                     }
                 }
             }
@@ -91,12 +98,6 @@ public class Player : NetworkBehaviour
     {
         return GameManager.Instance.GetLocalPlayerType() == GameManager.Instance.GetCurrentPlayablePlayerType();
     }
-
-    // [Rpc(SendTo.Server)]
-    // public void PlayerMovementRpc()
-    // {
-
-    // }
     
     [Rpc(SendTo.ClientsAndHost)]
     public void TriggerStartMoveRpc(){

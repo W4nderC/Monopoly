@@ -68,6 +68,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player 1 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 5142926884029562820, guid: 74d844574996a9c44b8014db52878b56,
+        type: 3}
+      propertyPath: currentMoney.m_InternalValue
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 5738445021146204628, guid: 74d844574996a9c44b8014db52878b56,
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

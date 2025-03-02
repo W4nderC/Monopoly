@@ -87,7 +87,7 @@ public class DiceManager : MonoBehaviour
         // if both dice have value => change game state
         if (diceValue1 > 0 && diceValue2 > 0)
         {
-            GameManager.Instance.InvokeOnUnitMovingRpc();
+            GameManager.Instance.TriggerOnUnitMovingRpc();
         }
     }
 }
