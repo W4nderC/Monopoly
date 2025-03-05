@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
+using Unity.Collections; 
 
 public class PlayerAsset : NetworkBehaviour
 {
-    [SerializeField] private NetworkVariable<float> currentMoney = new NetworkVariable<float>();
+    public NetworkVariable<FixedString32Bytes> playerName = new NetworkVariable<FixedString32Bytes>("Player", NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    public NetworkVariable<float> currentMoney = new NetworkVariable<float>(200, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
     private void Start(){
         CurrencyManager.Instance.OnPurchaseLand += CurrencyManager_OnPurchaseLand;
@@ -15,6 +18,21 @@ public class PlayerAsset : NetworkBehaviour
         CurrencyManager.Instance.OnUpgradeLand += CurrencyManager_OnUpgradeLand;
         CurrencyManager.Instance.OnBuyBackLand += CurrencyManager_OnBuyBackLand;
     }
+
+    public override void OnNetworkSpawn()
+    {
+        // if (IsOwner)
+        // {
+        //     SetPlayerInfoServerRpc("Player_" + OwnerClientId, 200);
+        // }
+    }
+
+    // [Rpc(SendTo.Server)]
+    // public void SetPlayerInfoServerRpc(string newName, int newMoney)
+    // {
+    //     playerName.Value = newName;
+    //     currentMoney.Value = newMoney;
+    // }
 
     private void CurrencyManager_OnBuyBackLand(object sender, EventArgs e)
     {

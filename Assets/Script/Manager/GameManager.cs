@@ -139,7 +139,6 @@ public class GameManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void TriggerPlayerConnectedRpc(PlayerType playerType)
     {
-        // print(playerType+" call event time");
         OnPlayerConnected?.Invoke(this, new OnPlayerConnectedEventArgs {
             playerType = playerType
         });
